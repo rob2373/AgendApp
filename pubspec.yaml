@@ -1,0 +1,41 @@
+name: agendapp
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+  curved_navigation_bar: ^1.0.6
+  flutter_native_splash: ^2.4.2
+  sqflite: ^2.4.1
+  path_provider: ^2.1.4
+  provider: ^6.1.2
+  intl: ^0.18.0
+  flutter_slidable: ^3.1.1
+  table_calendar: ^3.0.9
+
+
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/img/
+
+flutter_native_splash:
+  color: "#A7C7E7"
+  branding: assets/img/logo.png
+  android_12:
+    color: "#A7C7E7"
+    image: assets/img/logo.png
+    branding: assets/img/texto.png
+
