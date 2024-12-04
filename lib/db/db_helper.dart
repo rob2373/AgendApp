@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart';
+import 'package:intl/intl.dart';
 
 class SQLHelper {
   static Future<void> createTable(sql.Database database) async {
@@ -78,8 +79,8 @@ class SQLHelper {
 
   static Future<sql.Database> db() async {
     final dbPath = join(await sql.getDatabasesPath(), 'agendapp.db');
-    // Eliminar la base de datos si existe 
-    
+    // Eliminar la base de datos si existe
+
     return sql.openDatabase(dbPath, version: 1,
         onCreate: (sql.Database database, int version) async {
       await createTable(database);
@@ -126,21 +127,72 @@ class SQLHelper {
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
   }
 
-// Cambia fkUsuario de String a int
-static Future<List<Map<String, dynamic>>> allReuniones(int fkUsuario) async {
-  final db = await SQLHelper.db();
-  try {
-    // Realiza la consulta con el fk_usuario directamente como int
-    return await db.query(
+  //borrar la reunion
+  static Future<int> borrarReunion(int id) async {
+    final db = await SQLHelper.db();
+    return db.delete(
       'reunionEve',
-      where: "fk_usuario = ?",
-      whereArgs: [fkUsuario],  // Aquí ya no necesitamos parsear
+      where: 'id = ?',
+      whereArgs: [id], // Filtra por el ID de la reunión
     );
-  } catch (e) {
-    // Manejo de errores
-    print("Error al obtener reuniones: $e");
-    return [];  // Devuelve una lista vacía si hay un error
   }
+
+  // Actualizar reunión
+  static Future<int> actualizarReunion(
+      int id,
+      String titulo,
+      String descripcion,
+      String fecha,
+      String hora,
+      String linkUbi,
+      int estado) async {
+    final db = await SQLHelper.db();
+    final dataReunion = {
+      'titulo': titulo,
+      'descripcion': descripcion,
+      'fecha': fecha,
+      'hora': hora,
+      'link_ubi': linkUbi,
+      'estado': estado
+    };
+    return db.update('reunionEve', dataReunion,
+        where: 'id = ?',
+        whereArgs: [id],
+        conflictAlgorithm: sql.ConflictAlgorithm.replace);
+  }
+
+// Cambia fkUsuario de String a int
+
+  static Future<List<Map<String, dynamic>>> allReuniones(int fkUsuario) async {
+    final db = await SQLHelper.db();
+    try {
+      // Realiza la consulta con el fk_usuario directamente como int
+      return await db.query(
+        'reunionEve',
+        where: "fk_usuario = ?",
+        whereArgs: [fkUsuario], // Aquí ya no necesitamos parsear
+      );
+    } catch (e) {
+      // Manejo de errores
+      print("Error al obtener reuniones: $e");
+      return []; // Devuelve una lista vacía si hay un error
+    }
+  }
+
+  // Si necesitas formatear la fecha de otra manera, ajusta el formato
+// Por ejemplo, si en tu base de datos está en formato 'DD/MM/YYYY':
+ // En tu db_helper.dart
+static Future<List<Map<String, dynamic>>> reunionesHoy(int userId) async {
+  final db = await SQLHelper.db();
+  
+  // Obtener la fecha de hoy en el formato que uses (ej: 'YYYY-MM-DD')
+  final fechaHoy = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+  return await db.query(
+    'reunionEve', 
+    where: 'fk_usuario = ? AND fecha = ?',
+    whereArgs: [userId, fechaHoy]
+  );
 }
   //tarea
 

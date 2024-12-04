@@ -59,9 +59,11 @@ void _insertarReunion() async {
     return;
   }
 
-  // Convertir fecha y hora a cadenas en formato ISO8601
-  String fechaString = _fecha.toIso8601String();
-  String horaString = _hora.toIso8601String();
+ // Convertir la fecha al formato yyyy-MM-dd
+String fechaString = DateFormat('yyyy-MM-dd').format(_fecha);
+
+// Convertir la hora al formato HH:mm
+String horaString = DateFormat('HH:mm').format(_hora);
 
   final int result = await SQLHelper.insertarReunion(
     titulo,
@@ -108,7 +110,7 @@ void _insertarReunion() async {
               TextField(
                 controller: _descripcionController,
                 decoration: const InputDecoration(
-                  labelText: 'Título de la Reunión',
+                  labelText: 'Descripción de la Reunión',
                   border: OutlineInputBorder(),
                 ),
               ),
